@@ -3,6 +3,53 @@
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your profile information')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+            <!-- Avatar Upload -->
+            <div>
+                <flux:input type="file" wire:model="avatar" :label="__('Avatar')" accept="image/*" />
+
+                <div class="mt-3 flex items-center gap-4">
+                    @if (auth()->user()->avatar)
+                        <div>
+                            <flux:label class="text-sm">{{ __('Current avatar:') }}</flux:label>
+                            <div class="mt-2">
+                                <flux:avatar
+                                    :src="asset('storage/' . auth()->user()->avatar)"
+                                    :name="auth()->user()->full_name"
+                                    size="xl"
+                                />
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($avatar)
+                        <div>
+                            <flux:label class="text-sm">{{ __('Preview:') }}</flux:label>
+                            <div class="mt-2">
+                                <flux:avatar
+                                    :src="$avatar->temporaryUrl()"
+                                    :name="auth()->user()->full_name"
+                                    size="xl"
+                                />
+                            </div>
+                        </div>
+                    @endif
+
+                    @if (!auth()->user()->avatar && !$avatar)
+                        <div>
+                            <flux:label class="text-sm">{{ __('Current avatar:') }}</flux:label>
+                            <div class="mt-2">
+                                <flux:avatar
+                                    :name="auth()->user()->full_name"
+                                    size="lg"
+                                    color="auto"
+                                    :color:seed="auth()->user()->id"
+                                />
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <flux:input wire:model="first_name" :label="__('First Name')" type="text" required autofocus autocomplete="given-name" />
                 <flux:input wire:model="last_name" :label="__('Last Name')" type="text" required autocomplete="family-name" />

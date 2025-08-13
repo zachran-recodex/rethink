@@ -5,11 +5,15 @@ namespace App\Livewire\Settings;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Profile extends Component
 {
+    use WithFileUploads;
+
     public string $first_name = '';
 
     public string $last_name = '';
@@ -25,6 +29,8 @@ class Profile extends Component
     public string $birth_date = '';
 
     public string $gender = '';
+
+    public $avatar;
 
     /**
      * Mount the component.
@@ -65,7 +71,17 @@ class Profile extends Component
             'address' => ['nullable', 'string'],
             'birth_date' => ['nullable', 'date'],
             'gender' => ['nullable', 'string', 'in:male,female,other'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($this->avatar) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatarPath = $this->avatar->store('avatars', 'public');
+            $validated['avatar'] = $avatarPath;
+        }
 
         $user->fill($validated);
 
