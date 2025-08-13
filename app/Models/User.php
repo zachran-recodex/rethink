@@ -56,6 +56,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'date',
             'is_active' => 'boolean',
+            'deleted_at' => 'datetime',
         ];
     }
 
