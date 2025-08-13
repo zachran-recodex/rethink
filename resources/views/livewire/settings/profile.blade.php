@@ -1,9 +1,14 @@
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your profile information')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <div class="grid grid-cols-2 gap-4">
+                <flux:input wire:model="first_name" :label="__('First Name')" type="text" required autofocus autocomplete="given-name" />
+                <flux:input wire:model="last_name" :label="__('Last Name')" type="text" required autocomplete="family-name" />
+            </div>
+
+            <flux:input wire:model="username" :label="__('Username')" type="text" required autocomplete="username" />
 
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
@@ -25,6 +30,20 @@
                         @endif
                     </div>
                 @endif
+            </div>
+
+            <flux:input wire:model="phone" :label="__('Phone')" type="text" autocomplete="tel" />
+
+            <flux:textarea wire:model="address" :label="__('Address')" rows="3" />
+
+            <div class="grid grid-cols-2 gap-4">
+                <flux:input wire:model="birth_date" :label="__('Birth Date')" type="date" />
+                <flux:select wire:model="gender" :label="__('Gender')">
+                    <option value="">{{ __('Select Gender') }}</option>
+                    <option value="male">{{ __('Male') }}</option>
+                    <option value="female">{{ __('Female') }}</option>
+                    <option value="other">{{ __('Other') }}</option>
+                </flux:select>
             </div>
 
             <div class="flex items-center gap-4">

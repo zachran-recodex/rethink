@@ -10,17 +10,36 @@ use Livewire\Component;
 
 class Profile extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+
+    public string $last_name = '';
+
+    public string $username = '';
 
     public string $email = '';
+
+    public string $phone = '';
+
+    public string $address = '';
+
+    public string $birth_date = '';
+
+    public string $gender = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->first_name = $user->first_name ?? '';
+        $this->last_name = $user->last_name ?? '';
+        $this->username = $user->username ?? '';
+        $this->email = $user->email ?? '';
+        $this->phone = $user->phone ?? '';
+        $this->address = $user->address ?? '';
+        $this->birth_date = $user->birth_date ? $user->birth_date->format('Y-m-d') : '';
+        $this->gender = $user->gender ?? '';
     }
 
     /**
@@ -31,8 +50,9 @@ class Profile extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'email' => [
                 'required',
                 'string',
@@ -41,6 +61,10 @@ class Profile extends Component
                 'max:255',
                 Rule::unique(User::class)->ignore($user->id),
             ],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string'],
+            'birth_date' => ['nullable', 'date'],
+            'gender' => ['nullable', 'string', 'in:male,female,other'],
         ]);
 
         $user->fill($validated);
@@ -51,7 +75,7 @@ class Profile extends Component
 
         $user->save();
 
-        $this->dispatch('profile-updated', name: $user->name);
+        $this->dispatch('profile-updated', name: $user->full_name);
     }
 
     /**
