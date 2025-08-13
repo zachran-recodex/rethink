@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(php artisan serve:*)",
+      "Bash(where php)",
+      "Bash(php:*)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan serve --port=8080)",
+      "Bash(composer dev:*)",
+      "Bash(C:Userszachr.configherdbincomposer.bat run-script dev)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" run-script dev)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan serve)",
+      "Bash(composer run:*)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/php.bat\" artisan serve --port=8080)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(mkdir:*)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan make:seeder UserAccountSeeder)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan migrate:status)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan migrate:fresh --seed)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan cache:clear)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan config:clear)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan view:clear)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat artisan:*)",
+      "Bash(del \"C:\\Users\\zachr\\PhpstormProjects\\rethink\\app\\Livewire\\Settings\\Password.php\")",
+      "Bash(rm:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat vendor/bin/pint)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7"
+  ]
+}
