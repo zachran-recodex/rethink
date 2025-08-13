@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 
-    Route::get('administrator/users', UserManagement::class)->name('administrator.users');
+    Route::get('administrator/users', UserManagement::class)->name('administrator.users')->middleware('role:Super Admin');
 });
 
 require __DIR__.'/auth.php';
