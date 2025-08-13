@@ -33,6 +33,7 @@ class UserManagement extends Component
     public $password = '';
 
     public $passwordConfirmation = '';
+    public $isActive = true;
 
     // Deleted users properties
     public $showDeletedUsers = false;
@@ -102,6 +103,7 @@ class UserManagement extends Component
         $this->lastName = $user->last_name;
         $this->username = $user->username;
         $this->email = $user->email;
+        $this->isActive = $user->is_active;
         $this->password = '';
         $this->passwordConfirmation = '';
         $this->showUserModal = true;
@@ -133,6 +135,7 @@ class UserManagement extends Component
                 'last_name' => $this->lastName,
                 'username' => $this->username,
                 'email' => $this->email,
+                'is_active' => $this->isActive,
             ]);
 
             if ($this->password) {
@@ -150,6 +153,7 @@ class UserManagement extends Component
                 'username' => $this->username,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
+                'is_active' => $this->isActive,
             ]);
 
             $message = 'User created successfully!';
@@ -187,6 +191,16 @@ class UserManagement extends Component
         session()->flash('success', 'User permanently deleted!');
     }
 
+    public function toggleUserStatus($userId)
+    {
+        $user = User::find($userId);
+        $user->update(['is_active' => !$user->is_active]);
+
+        $this->loadData();
+        $status = $user->is_active ? 'activated' : 'deactivated';
+        session()->flash('success', "User {$status} successfully!");
+    }
+
     public function closeUserModal()
     {
         $this->showUserModal = false;
@@ -201,6 +215,7 @@ class UserManagement extends Component
         $this->email = '';
         $this->password = '';
         $this->passwordConfirmation = '';
+        $this->isActive = true;
         $this->editingUser = null;
     }
 

@@ -57,6 +57,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Avatar</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">User</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Roles</th>
                             <th class="px-6 py-3 text-center text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
                         </tr>
@@ -77,6 +78,15 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
                                     {{ $user->email }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <flux:badge 
+                                        variant="solid" 
+                                        color="{{ $user->is_active ? 'green' : 'red' }}" 
+                                        size="sm"
+                                    >
+                                        {{ $user->is_active ? 'Active' : 'Inactive' }}
+                                    </flux:badge>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex flex-wrap gap-1">
@@ -130,6 +140,16 @@
                                                 wire:click="openEditUserModal({{ $user->id }})"
                                             >
                                                 Edit
+                                            </flux:button>
+
+                                            <flux:button 
+                                                size="sm" 
+                                                variant="{{ $user->is_active ? 'filled' : 'primary' }}" 
+                                                icon="{{ $user->is_active ? 'pause' : 'play' }}"
+                                                wire:click="toggleUserStatus({{ $user->id }})"
+                                                wire:confirm="Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} {{ $user->full_name }}?"
+                                            >
+                                                {{ $user->is_active ? 'Deactivate' : 'Activate' }}
                                             </flux:button>
                                             
                                             @if($user->roles->count() > 0)
@@ -218,6 +238,13 @@
                         <flux:label>Email</flux:label>
                         <flux:input type="email" wire:model="email" placeholder="Enter email address" />
                         <flux:error name="email" />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>Status</flux:label>
+                        <flux:checkbox wire:model="isActive">
+                            Active User
+                        </flux:checkbox>
                     </flux:field>
 
                     <div class="grid grid-cols-2 gap-4">
