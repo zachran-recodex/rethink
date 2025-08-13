@@ -5,9 +5,7 @@
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <!-- Avatar Upload -->
             <div>
-                <flux:input type="file" wire:model="avatar" :label="__('Avatar')" accept="image/*" />
-
-                <div class="mt-3 flex items-center gap-4">
+                <div class="mb-3 flex items-center gap-4">
                     @if (auth()->user()->avatar)
                         <div>
                             <flux:label class="text-sm">{{ __('Current avatar:') }}</flux:label>
@@ -41,13 +39,13 @@
                                 <flux:avatar
                                     :name="auth()->user()->full_name"
                                     size="xl"
-                                    color="auto"
-                                    :color:seed="auth()->user()->id"
                                 />
                             </div>
                         </div>
                     @endif
                 </div>
+
+                <flux:input type="file" wire:model="avatar" :label="__('Avatar')" accept="image/*" />
             </div>
 
             <div class="grid grid-cols-2 gap-4">

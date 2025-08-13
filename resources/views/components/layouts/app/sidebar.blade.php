@@ -33,10 +33,8 @@
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
                 <flux:profile
                     :name="auth()->user()->full_name"
-                    :src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
-                    :initials="auth()->user()->initials()"
-                    color="auto"
-                    :color:seed="auth()->user()->id"
+                    :avatar:src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
+                    :initials="!auth()->user()->avatar ? auth()->user()->initials() : null"
                     icon:trailing="chevrons-up-down"
                 />
 
@@ -47,11 +45,8 @@
                                 <flux:avatar
                                     :name="auth()->user()->full_name"
                                     :src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
-                                    :initials="auth()->user()->initials()"
-                                    color="auto"
-                                    :color:seed="auth()->user()->id"
+                                    :initials="!auth()->user()->avatar ? auth()->user()->initials() : null"
                                     size="sm"
-                                    circle
                                 />
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
@@ -89,10 +84,11 @@
             <flux:dropdown position="top" align="end">
                 <flux:profile
                     :name="auth()->user()->full_name"
-                    :src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
-                    :initials="auth()->user()->initials()"
-                    color="auto"
-                    :color:seed="auth()->user()->id"
+                    :avatar:src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
+                    :initials="!auth()->user()->avatar ? auth()->user()->initials() : null"
+                    avatar:color="auto"
+                    :avatar:color:seed="auth()->user()->id"
+                    avatar:circle
                     icon-trailing="chevron-down"
                 />
 
@@ -103,7 +99,7 @@
                                 <flux:avatar
                                     :name="auth()->user()->full_name"
                                     :src="auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : null"
-                                    :initials="auth()->user()->initials()"
+                                    :initials="!auth()->user()->avatar ? auth()->user()->initials() : null"
                                     color="auto"
                                     :color:seed="auth()->user()->id"
                                     size="sm"
