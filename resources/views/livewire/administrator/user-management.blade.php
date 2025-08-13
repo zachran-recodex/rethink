@@ -76,7 +76,16 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex flex-wrap gap-1">
                                         @forelse($user->roles as $role)
-                                            <flux:badge variant="solid" color="blue" size="sm">
+                                            <flux:badge 
+                                                variant="solid" 
+                                                color="{{ 
+                                                    $role->name === 'Super Admin' ? 'red' : (
+                                                    $role->name === 'Admin' ? 'blue' : (
+                                                    $role->name === 'User' ? 'green' : (
+                                                    $role->name === 'Guest' ? 'purple' : null)))
+                                                }}" 
+                                                size="sm"
+                                            >
                                                 {{ $role->name }}
                                             </flux:badge>
                                         @empty
