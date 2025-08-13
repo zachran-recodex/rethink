@@ -33,10 +33,12 @@ class UserManagement extends Component
     public $password = '';
 
     public $passwordConfirmation = '';
+
     public $isActive = true;
 
     // Deleted users properties
     public $showDeletedUsers = false;
+
     public $deletedUsers = [];
 
     public function mount()
@@ -58,7 +60,7 @@ class UserManagement extends Component
 
     public function toggleDeletedUsersView()
     {
-        $this->showDeletedUsers = !$this->showDeletedUsers;
+        $this->showDeletedUsers = ! $this->showDeletedUsers;
     }
 
     public function assignRole()
@@ -194,7 +196,7 @@ class UserManagement extends Component
     public function toggleUserStatus($userId)
     {
         $user = User::find($userId);
-        $user->update(['is_active' => !$user->is_active]);
+        $user->update(['is_active' => ! $user->is_active]);
 
         $this->loadData();
         $status = $user->is_active ? 'activated' : 'deactivated';
