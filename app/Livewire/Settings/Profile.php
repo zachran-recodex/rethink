@@ -81,6 +81,10 @@ class Profile extends Component
 
             $avatarPath = $this->avatar->store('avatars', 'public');
             $validated['avatar'] = $avatarPath;
+        } else {
+            // Remove avatar from validated array if no new file uploaded
+            // This prevents overwriting existing avatar with null
+            unset($validated['avatar']);
         }
 
         // Convert empty strings to null for nullable fields
