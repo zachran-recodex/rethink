@@ -35,6 +35,24 @@ jobs:
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
           npm install
 
+      - name: Copy Environment File
+        run: cp .env.example .env
+
+      - name: Set Testing Environment
+        run: |
+          echo "CACHE_STORE=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
+
+      - name: Generate Application Key
+        run: php artisan key:generate
+
+      - name: Create Cache Directories
+        run: |
+          mkdir -p storage/framework/cache
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p storage/logs
+
       - name: Run Pint
         run: vendor/bin/pint
 
