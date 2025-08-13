@@ -10,7 +10,7 @@ class UserAccountSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
+        $user = User::create([
             'first_name' => 'Zachran',
             'last_name' => 'Razendra',
             'username' => 'zachranraze',
@@ -24,5 +24,8 @@ class UserAccountSeeder extends Seeder
             'gender' => null,
             'is_active' => true,
         ]);
+
+        // Assign Super Admin role
+        $user->assignRole('Super Admin');
     }
 }
