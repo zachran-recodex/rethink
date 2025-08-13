@@ -40,9 +40,14 @@
         <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6">
             <div class="flex justify-between items-center mb-4">
                 <flux:heading size="lg">Users & Roles</flux:heading>
-                <flux:button wire:click="openCreateUserModal" variant="primary" icon="plus" size="sm">
-                    Add User
-                </flux:button>
+                <div class="flex gap-2">
+                    <flux:button wire:click="toggleDeletedUsersView" variant="ghost" icon="archive-box" size="sm">
+                        {{ $showDeletedUsers ? 'Show Active Users' : 'Show Deleted Users' }}
+                    </flux:button>
+                    <flux:button wire:click="openCreateUserModal" variant="primary" icon="plus" size="sm">
+                        Add User
+                    </flux:button>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -57,7 +62,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                        @foreach($users as $user)
+                        @foreach(($showDeletedUsers ? $deletedUsers : $users) as $user)
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <flux:avatar
@@ -95,43 +100,67 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                     <div class="flex items-center justify-center gap-2">
-                                        <flux:button 
-                                            size="sm" 
-                                            variant="ghost" 
-                                            icon="pencil"
-                                            wire:click="openEditUserModal({{ $user->id }})"
-                                        >
-                                            Edit
-                                        </flux:button>
-                                        
-                                        @if($user->roles->count() > 0)
-                                            <flux:dropdown>
-                                                <flux:button size="sm" variant="ghost" icon="minus">
-                                                    Remove Role
-                                                </flux:button>
-                                                <flux:menu>
-                                                    @foreach($user->roles as $role)
-                                                        <flux:menu.item
-                                                            wire:click="removeRole({{ $user->id }}, '{{ $role->name }}')"
-                                                            wire:confirm="Are you sure you want to remove the '{{ $role->name }}' role from {{ $user->full_name }}?"
-                                                            icon="minus"
-                                                        >
-                                                            Remove {{ $role->name }}
-                                                        </flux:menu.item>
-                                                    @endforeach
-                                                </flux:menu>
-                                            </flux:dropdown>
-                                        @endif
+                                        @if($showDeletedUsers)
+                                            <!-- Actions for deleted users -->
+                                            <flux:button 
+                                                size="sm" 
+                                                variant="primary" 
+                                                icon="arrow-path"
+                                                wire:click="restoreUser({{ $user->id }})"
+                                                wire:confirm="Are you sure you want to restore {{ $user->full_name }}?"
+                                            >
+                                                Restore
+                                            </flux:button>
 
-                                        <flux:button 
-                                            size="sm" 
-                                            variant="danger" 
-                                            icon="trash"
-                                            wire:click="deleteUser({{ $user->id }})"
-                                            wire:confirm="Are you sure you want to delete {{ $user->full_name }}? This action cannot be undone."
-                                        >
-                                            Delete
-                                        </flux:button>
+                                            <flux:button 
+                                                size="sm" 
+                                                variant="danger" 
+                                                icon="trash"
+                                                wire:click="permanentlyDeleteUser({{ $user->id }})"
+                                                wire:confirm="Are you sure you want to permanently delete {{ $user->full_name }}? This action cannot be undone!"
+                                            >
+                                                Delete Forever
+                                            </flux:button>
+                                        @else
+                                            <!-- Actions for active users -->
+                                            <flux:button 
+                                                size="sm" 
+                                                variant="ghost" 
+                                                icon="pencil"
+                                                wire:click="openEditUserModal({{ $user->id }})"
+                                            >
+                                                Edit
+                                            </flux:button>
+                                            
+                                            @if($user->roles->count() > 0)
+                                                <flux:dropdown>
+                                                    <flux:button size="sm" variant="ghost" icon="minus">
+                                                        Remove Role
+                                                    </flux:button>
+                                                    <flux:menu>
+                                                        @foreach($user->roles as $role)
+                                                            <flux:menu.item
+                                                                wire:click="removeRole({{ $user->id }}, '{{ $role->name }}')"
+                                                                wire:confirm="Are you sure you want to remove the '{{ $role->name }}' role from {{ $user->full_name }}?"
+                                                                icon="minus"
+                                                            >
+                                                                Remove {{ $role->name }}
+                                                            </flux:menu.item>
+                                                        @endforeach
+                                                    </flux:menu>
+                                                </flux:dropdown>
+                                            @endif
+
+                                            <flux:button 
+                                                size="sm" 
+                                                variant="danger" 
+                                                icon="trash"
+                                                wire:click="deleteUser({{ $user->id }})"
+                                                wire:confirm="Are you sure you want to delete {{ $user->full_name }}? This action can be undone from the deleted users view."
+                                            >
+                                                Delete
+                                            </flux:button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

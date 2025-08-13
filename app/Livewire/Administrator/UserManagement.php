@@ -34,6 +34,10 @@ class UserManagement extends Component
 
     public $passwordConfirmation = '';
 
+    // Deleted users properties
+    public $showDeletedUsers = false;
+    public $deletedUsers = [];
+
     public function mount()
     {
         $this->loadData();
@@ -43,6 +47,17 @@ class UserManagement extends Component
     {
         $this->users = User::with('roles')->get();
         $this->roles = Role::all();
+        $this->loadDeletedUsers();
+    }
+
+    public function loadDeletedUsers()
+    {
+        $this->deletedUsers = User::onlyTrashed()->with('roles')->get();
+    }
+
+    public function toggleDeletedUsersView()
+    {
+        $this->showDeletedUsers = !$this->showDeletedUsers;
     }
 
     public function assignRole()
@@ -152,6 +167,24 @@ class UserManagement extends Component
 
         $this->loadData();
         session()->flash('success', 'User deleted successfully!');
+    }
+
+    public function restoreUser($userId)
+    {
+        $user = User::onlyTrashed()->find($userId);
+        $user->restore();
+
+        $this->loadData();
+        session()->flash('success', 'User restored successfully!');
+    }
+
+    public function permanentlyDeleteUser($userId)
+    {
+        $user = User::onlyTrashed()->find($userId);
+        $user->forceDelete();
+
+        $this->loadData();
+        session()->flash('success', 'User permanently deleted!');
     }
 
     public function closeUserModal()
