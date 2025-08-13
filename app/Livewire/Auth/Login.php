@@ -16,7 +16,7 @@ use Livewire\Component;
 class Login extends Component
 {
     #[Validate('required|string')]
-    public string $login = '';
+    public string $username = '';
 
     #[Validate('required|string')]
     public string $password = '';
@@ -32,15 +32,11 @@ class Login extends Component
 
         $this->ensureIsNotRateLimited();
 
-        $credentials = filter_var($this->login, FILTER_VALIDATE_EMAIL)
-            ? ['email' => $this->login, 'password' => $this->password]
-            : ['username' => $this->login, 'password' => $this->password];
-
-        if (! Auth::attempt($credentials, $this->remember)) {
+        if (! Auth::attempt(['username' => $this->username, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'login' => __('auth.failed'),
+                'username' => __('auth.failed'),
             ]);
         }
 
@@ -64,7 +60,7 @@ class Login extends Component
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'login' => __('auth.throttle', [
+            'username' => __('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -76,6 +72,6 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->login).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->username).'|'.request()->ip());
     }
 }

@@ -14,7 +14,7 @@ test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
     $response = Livewire::test(Login::class)
-        ->set('login', $user->email)
+        ->set('username', $user->username)
         ->set('password', 'password')
         ->call('login');
 
@@ -29,11 +29,11 @@ test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
     $response = Livewire::test(Login::class)
-        ->set('login', $user->email)
+        ->set('username', $user->username)
         ->set('password', 'wrong-password')
         ->call('login');
 
-    $response->assertHasErrors('login');
+    $response->assertHasErrors('username');
 
     $this->assertGuest();
 });

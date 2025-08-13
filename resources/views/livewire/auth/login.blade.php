@@ -1,19 +1,19 @@
 <div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email/username and password below to log in')" />
+    <x-auth-header :title="__('Log in to your account')" :description="__('Enter your username and password below to log in')" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form method="POST" wire:submit="login" class="flex flex-col gap-6">
-        <!-- Login (Email or Username) -->
+        <!-- Username -->
         <flux:input
-            wire:model="login"
-            :label="__('Email or Username')"
+            wire:model="username"
+            :label="__('Username')"
             type="text"
             required
             autofocus
             autocomplete="username"
-            placeholder="email@example.com or username"
+            placeholder="username"
         />
 
         <!-- Password -->
