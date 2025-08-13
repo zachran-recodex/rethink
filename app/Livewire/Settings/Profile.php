@@ -83,6 +83,20 @@ class Profile extends Component
             $validated['avatar'] = $avatarPath;
         }
 
+        // Convert empty strings to null for nullable fields
+        if (empty($validated['phone'])) {
+            $validated['phone'] = null;
+        }
+        if (empty($validated['address'])) {
+            $validated['address'] = null;
+        }
+        if (empty($validated['birth_date'])) {
+            $validated['birth_date'] = null;
+        }
+        if (empty($validated['gender'])) {
+            $validated['gender'] = null;
+        }
+
         $user->fill($validated);
 
         if ($user->isDirty('email')) {

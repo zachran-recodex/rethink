@@ -40,7 +40,7 @@
                             <div class="mt-2">
                                 <flux:avatar
                                     :name="auth()->user()->full_name"
-                                    size="lg"
+                                    size="xl"
                                     color="auto"
                                     :color:seed="auth()->user()->id"
                                 />
