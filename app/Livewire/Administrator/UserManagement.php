@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Livewire\Administrator;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Livewire\Component;
+use Spatie\Permission\Models\Role;
+
+class UserManagement extends Component
+{
+    public $users;
+
+    public $roles;
+
+    public $selectedUser = '';
+
+    public $selectedRole = '';
+
+    // User CRUD properties
+    public $showUserModal = false;
+
+    public $editingUser = null;
+
+    public $firstName = '';
+
+    public $lastName = '';
+
+    public $username = '';
+
+    public $email = '';
+
+    public $password = '';
+
+    public $passwordConfirmation = '';
+
+    public function mount()
+    {
+        $this->loadData();
+    }
+
+    public function loadData()
+    {
+        $this->users = User::with('roles')->get();
+        $this->roles = Role::all();
+    }
+
+    public function assignRole()
+    {
+        $this->validate([
+            'selectedUser' => 'required|exists:users,id',
+            'selectedRole' => 'required|exists:roles,name',
+        ]);
+
+        $user = User::find($this->selectedUser);
+        $user->assignRole($this->selectedRole);
+
+        $this->reset(['selectedUser', 'selectedRole']);
+        $this->loadData();
+
+        session()->flash('success', 'Role assigned successfully!');
+    }
+
+    public function removeRole($userId, $roleName)
+    {
+        $user = User::find($userId);
+        $user->removeRole($roleName);
+
+        $this->loadData();
+
+        session()->flash('success', 'Role removed successfully!');
+    }
+
+    // User CRUD Methods
+    public function openCreateUserModal()
+    {
+        $this->resetUserForm();
+        $this->editingUser = null;
+        $this->showUserModal = true;
+    }
+
+    public function openEditUserModal($userId)
+    {
+        $user = User::find($userId);
+        $this->editingUser = $user;
+        $this->firstName = $user->first_name;
+        $this->lastName = $user->last_name;
+        $this->username = $user->username;
+        $this->email = $user->email;
+        $this->password = '';
+        $this->passwordConfirmation = '';
+        $this->showUserModal = true;
+    }
+
+    public function saveUser()
+    {
+        $rules = [
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,'.($this->editingUser ? $this->editingUser->id : 'NULL'),
+            'email' => 'required|email|max:255|unique:users,email,'.($this->editingUser ? $this->editingUser->id : 'NULL'),
+        ];
+
+        if (! $this->editingUser) {
+            $rules['password'] = 'required|min:8';
+            $rules['passwordConfirmation'] = 'required|same:password';
+        } elseif ($this->password) {
+            $rules['password'] = 'min:8';
+            $rules['passwordConfirmation'] = 'same:password';
+        }
+
+        $this->validate($rules);
+
+        if ($this->editingUser) {
+            // Update existing user
+            $this->editingUser->update([
+                'first_name' => $this->firstName,
+                'last_name' => $this->lastName,
+                'username' => $this->username,
+                'email' => $this->email,
+            ]);
+
+            if ($this->password) {
+                $this->editingUser->update([
+                    'password' => Hash::make($this->password),
+                ]);
+            }
+
+            $message = 'User updated successfully!';
+        } else {
+            // Create new user
+            User::create([
+                'first_name' => $this->firstName,
+                'last_name' => $this->lastName,
+                'username' => $this->username,
+                'email' => $this->email,
+                'password' => Hash::make($this->password),
+            ]);
+
+            $message = 'User created successfully!';
+        }
+
+        $this->closeUserModal();
+        $this->loadData();
+        session()->flash('success', $message);
+    }
+
+    public function deleteUser($userId)
+    {
+        $user = User::find($userId);
+        $user->delete();
+
+        $this->loadData();
+        session()->flash('success', 'User deleted successfully!');
+    }
+
+    public function closeUserModal()
+    {
+        $this->showUserModal = false;
+        $this->resetUserForm();
+    }
+
+    private function resetUserForm()
+    {
+        $this->firstName = '';
+        $this->lastName = '';
+        $this->username = '';
+        $this->email = '';
+        $this->password = '';
+        $this->passwordConfirmation = '';
+        $this->editingUser = null;
+    }
+
+    public function render()
+    {
+        return view('livewire.administrator.user-management');
+    }
+}

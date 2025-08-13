@@ -27,7 +27,11 @@
       "Bash(del \"C:\\Users\\zachr\\PhpstormProjects\\rethink\\app\\Livewire\\Settings\\Password.php\")",
       "Bash(rm:*)",
       "Bash(vendor/bin/pint:*)",
-      "Bash(C:/Users/zachr/.config/herd/bin/php.bat vendor/bin/pint)"
+      "Bash(C:/Users/zachr/.config/herd/bin/php.bat vendor/bin/pint)",
+      "Bash(composer:*)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require spatie/laravel-permission)",
+      "Bash(move:*)",
+      "Bash(mv:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
