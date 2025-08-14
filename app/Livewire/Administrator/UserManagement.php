@@ -49,8 +49,40 @@ class UserManagement extends Component
     public function loadData()
     {
         $this->users = User::with('roles')->get();
-        $this->roles = Role::all();
+        $this->roles = Role::withCount('users')->get();
         $this->loadDeletedUsers();
+
+        // Dispatch event to refresh chart
+        $this->dispatch('refreshChart');
+    }
+
+    public function getRoleChartDataProperty()
+    {
+        $roleData = $this->roles->map(function ($role) {
+            return [
+                'name' => $role->name,
+                'count' => $role->users_count,
+                'color' => $this->getRoleColor($role->name),
+            ];
+        });
+
+        return [
+            'labels' => $roleData->pluck('name')->toArray(),
+            'data' => $roleData->pluck('count')->toArray(),
+            'colors' => $roleData->pluck('color')->toArray(),
+        ];
+    }
+
+    private function getRoleColor($roleName)
+    {
+        $colors = [
+            'Super Admin' => '#ef4444',
+            'Admin' => '#3b82f6',
+            'User' => '#10b981',
+            'Guest' => '#8b5cf6',
+        ];
+
+        return $colors[$roleName] ?? '#6b7280';
     }
 
     public function loadDeletedUsers()

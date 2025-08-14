@@ -31,7 +31,13 @@
       "Bash(composer:*)",
       "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require spatie/laravel-permission)",
       "Bash(move:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require asantibanez/livewire-charts)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require \"asantibanez/livewire-charts:^4.1\")",
+      "mcp__laravel-boost__application-info",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "mcp__laravel-boost__browser-logs"
     ]
   },
   "enableAllProjectMcpServers": true,
