@@ -6,16 +6,25 @@ on:
       - develop
       - main
       - master
+      - deploy
   pull_request:
     branches:
       - develop
       - main
       - master
+      - deploy
+  workflow_run:
+    workflows: ["lint"]
+    types:
+      - completed
 
 jobs:
-  ci:
+  tests:
     runs-on: ubuntu-latest
     environment: Testing
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+    outputs:
+      tests-status: ${{ job.status }}
 
     steps:
       - name: Checkout
