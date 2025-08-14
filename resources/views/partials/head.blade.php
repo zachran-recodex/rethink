@@ -12,3 +12,8 @@
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @fluxAppearance
+
+<style>
+    /* Ensure CSS is used immediately */
+    body { font-family: var(--font-sans); }
+</style>
