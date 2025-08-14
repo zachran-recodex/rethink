@@ -152,7 +152,7 @@ jobs:
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            php artisan livewire:clear
+            php artisan optimize:clear
             
             # Set proper permissions
             echo "🔐 Setting permissions..."
