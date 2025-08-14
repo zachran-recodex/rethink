@@ -16,7 +16,7 @@
         @endif
 
         <!-- Assign Role Form -->
-        <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6">
+        <div class="bg-white rounded-lg border border-zinc-200 p-6">
             <flux:heading size="lg" class="mb-4">Assign Role to User</flux:heading>
 
             <form wire:submit="assignRole" class="space-y-4">
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Users and Their Roles -->
-        <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6">
+        <div class="bg-white rounded-lg border border-zinc-200 p-6">
             <div class="flex justify-between items-center mb-4">
                 <flux:heading size="lg">Users & Roles</flux:heading>
                 <div class="flex gap-2">
@@ -55,20 +55,20 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white dark:bg-zinc-900">
-                    <thead class="bg-zinc-50 dark:bg-zinc-800">
+                <table class="min-w-full bg-white">
+                    <thead class="bg-zinc-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Avatar</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Roles</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Avatar</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">User</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">Roles</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-zinc-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <tbody class="divide-y divide-zinc-200">
                         @foreach(($showDeletedUsers ? $deletedUsers : $users) as $user)
-                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                            <tr class="hover:bg-zinc-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <flux:avatar
                                         :src="$user->avatar ? asset('storage/' . $user->avatar) : null"
@@ -77,10 +77,10 @@
                                     />
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $user->full_name }}</div>
-                                    <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $user->username }}</div>
+                                    <div class="font-medium text-zinc-900">{{ $user->full_name }}</div>
+                                    <div class="text-sm text-zinc-500">{{ $user->username }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900">
                                     {{ $user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -184,20 +184,20 @@
         </div>
 
         <!-- Role Distribution Chart -->
-        <div class="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6">
+        <div class="bg-white rounded-lg border border-zinc-200 p-6">
             <flux:heading size="lg" class="mb-4">Role Distribution</flux:heading>
-            
+
             <div class="flex flex-col lg:flex-row items-center gap-6">
                 <div class="w-full lg:w-1/2 h-64">
                     <canvas id="roleChart" wire:ignore></canvas>
                 </div>
-                
+
                 <div class="w-full lg:w-1/2">
                     <div class="grid grid-cols-1 gap-3">
                         @foreach($roles as $role)
-                            <div class="flex items-center justify-between p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                            <div class="flex items-center justify-between p-3 rounded-lg border border-zinc-200">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full" style="background-color: {{ 
+                                    <div class="w-3 h-3 rounded-full" style="background-color: {{
                                         $role->name === 'Super Admin' ? '#ef4444' : (
                                         $role->name === 'Admin' ? '#3b82f6' : (
                                         $role->name === 'User' ? '#10b981' : (
@@ -205,7 +205,7 @@
                                     }}"></div>
                                     <flux:heading size="sm">{{ $role->name }}</flux:heading>
                                 </div>
-                                <div class="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                                <div class="text-sm font-medium text-zinc-600">
                                     {{ $role->users_count }} user{{ $role->users_count !== 1 ? 's' : '' }}
                                 </div>
                             </div>
@@ -275,7 +275,7 @@
                         </flux:field>
                     </div>
 
-                    <div class="flex justify-end space-x-2 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                    <div class="flex justify-end space-x-2 pt-4 border-t border-zinc-200">
                         <flux:button type="button" wire:click="closeUserModal" variant="ghost">
                             Cancel
                         </flux:button>
@@ -309,7 +309,7 @@
             }
 
             const chartData = @json($this->roleChartData);
-            
+
             roleChart = new window.Chart(canvas, {
                 type: 'doughnut',
                 data: {
