@@ -23,7 +23,25 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
+    /* Rethink Brand Colors */
+    --color-primary: #6967FB;
+    --color-primary-hover: #5854E8;
+    --color-primary-light: rgba(105, 103, 251, 0.1);
+    --color-primary-20: rgba(105, 103, 251, 0.2);
+    --color-primary-90: rgba(105, 103, 251, 0.9);
+    
+    --color-accent: #C8F904;
+    --color-accent-hover: #B5E003;
+    --color-accent-light: rgba(200, 249, 4, 0.1);
+    --color-accent-20: rgba(200, 249, 4, 0.2);
+    --color-accent-90: rgba(200, 249, 4, 0.9);
+    
+    --color-dark: #0E1A1F;
+    --color-dark-60: rgba(14, 26, 31, 0.6);
+    --color-dark-70: rgba(14, 26, 31, 0.7);
+    --color-dark-80: rgba(14, 26, 31, 0.8);
+    
+    /* Legacy Flux Colors */
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 }
@@ -37,7 +55,6 @@
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -45,6 +62,52 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+}
+
+@layer utilities {
+    /* Primary Color Utilities */
+    .bg-primary { background-color: var(--color-primary); }
+    .bg-primary-hover { background-color: var(--color-primary-hover); }
+    .bg-primary-light { background-color: var(--color-primary-light); }
+    .bg-primary-20 { background-color: var(--color-primary-20); }
+    .bg-primary-90 { background-color: var(--color-primary-90); }
+    
+    .text-primary { color: var(--color-primary); }
+    .text-primary-hover { color: var(--color-primary-hover); }
+    
+    .border-primary { border-color: var(--color-primary); }
+    .border-primary-20 { border-color: var(--color-primary-20); }
+    
+    /* Accent Color Utilities */
+    .bg-accent { background-color: var(--color-accent); }
+    .bg-accent-hover { background-color: var(--color-accent-hover); }
+    .bg-accent-light { background-color: var(--color-accent-light); }
+    .bg-accent-20 { background-color: var(--color-accent-20); }
+    .bg-accent-90 { background-color: var(--color-accent-90); }
+    
+    .text-accent { color: var(--color-accent); }
+    .text-accent-hover { color: var(--color-accent-hover); }
+    
+    .border-accent { border-color: var(--color-accent); }
+    .border-accent-20 { border-color: var(--color-accent-20); }
+    
+    /* Dark Color Utilities */
+    .bg-dark { background-color: var(--color-dark); }
+    .text-dark { color: var(--color-dark); }
+    .text-dark-60 { color: var(--color-dark-60); }
+    .text-dark-70 { color: var(--color-dark-70); }
+    .text-dark-80 { color: var(--color-dark-80); }
+    
+    .border-dark { border-color: var(--color-dark); }
+    .border-dark-20 { border-color: rgba(14, 26, 31, 0.2); }
+    
+    /* Hover Utilities */
+    .hover\:bg-primary-hover:hover { background-color: var(--color-primary-hover); }
+    .hover\:bg-primary-90:hover { background-color: var(--color-primary-90); }
+    .hover\:bg-accent-hover:hover { background-color: var(--color-accent-hover); }
+    .hover\:bg-accent-90:hover { background-color: var(--color-accent-90); }
+    .hover\:text-primary:hover { color: var(--color-primary); }
+    .hover\:text-dark:hover { color: var(--color-dark); }
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {
