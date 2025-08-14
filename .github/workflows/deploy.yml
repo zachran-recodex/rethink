@@ -156,7 +156,6 @@ jobs:
             
             # Set proper permissions
             echo "🔐 Setting permissions..."
-            chown -R deployer:www-data $APP_PATH || true
             chmod -R 755 $APP_PATH
             chmod -R 775 $APP_PATH/storage
             chmod -R 775 $APP_PATH/bootstrap/cache
