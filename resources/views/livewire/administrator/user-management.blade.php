@@ -292,6 +292,23 @@
     <script>
         let roleChart = null;
 
+        function destroyExistingChart() {
+            // Destroy existing chart instance
+            if (roleChart) {
+                roleChart.destroy();
+                roleChart = null;
+            }
+            
+            // Also destroy any chart that might be attached to the canvas
+            const canvas = document.getElementById('roleChart');
+            if (canvas) {
+                const existingChart = Chart.getChart(canvas);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+            }
+        }
+
         function initRoleChart() {
             const canvas = document.getElementById('roleChart');
             if (!canvas) return;
@@ -302,11 +319,8 @@
                 return;
             }
 
-            // Destroy existing chart
-            if (roleChart) {
-                roleChart.destroy();
-                roleChart = null;
-            }
+            // Destroy any existing charts
+            destroyExistingChart();
 
             const chartData = @json($this->roleChartData);
 
@@ -316,49 +330,61 @@
                 return;
             }
 
-            roleChart = new window.Chart(canvas, {
-                type: 'doughnut',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [{
-                        data: chartData.data,
-                        backgroundColor: chartData.colors,
-                        borderWidth: 0,
-                        hoverBorderWidth: 2,
-                        hoverBorderColor: '#374151'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} users (${percentage}%)`;
+            try {
+                roleChart = new window.Chart(canvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            data: chartData.data,
+                            backgroundColor: chartData.colors,
+                            borderWidth: 0,
+                            hoverBorderWidth: 2,
+                            hoverBorderColor: '#374151'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} users (${percentage}%)`;
+                                    }
                                 }
                             }
+                        },
+                        cutout: '60%',
+                        animation: {
+                            animateRotate: true,
+                            duration: 1000
                         }
-                    },
-                    cutout: '60%',
-                    animation: {
-                        animateRotate: true,
-                        duration: 1000
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Error creating chart:', error);
+                // Try again after a short delay
+                setTimeout(() => initRoleChart(), 200);
+            }
         }
 
         // Listen for Livewire events
         $wire.on('refreshChart', () => {
+            destroyExistingChart();
             setTimeout(() => initRoleChart(), 100);
+        });
+
+        // Clean up on component destroy
+        document.addEventListener('livewire:navigating', () => {
+            destroyExistingChart();
         });
 
         // Initialize chart when component loads
