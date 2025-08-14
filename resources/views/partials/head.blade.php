@@ -14,6 +14,38 @@
 @fluxAppearance
 
 <style>
-    /* Ensure CSS is used immediately */
-    body { font-family: var(--font-sans); }
+    /* Force immediate CSS usage to prevent preload warning */
+    html, body { 
+        font-family: var(--font-sans); 
+        margin: 0; 
+        padding: 0;
+        background-color: white;
+        color: #0E1A1F;
+    }
+    
+    /* Force light mode only */
+    html { color-scheme: light only; }
+    html.dark { color-scheme: light only; }
+    
+    /* Use some Tailwind classes immediately */
+    .min-h-screen { min-height: 100vh; }
+    .bg-white { background-color: white; }
+    .text-zinc-600 { color: #525252; }
 </style>
+
+<script>
+    // Force light mode and prevent dark mode
+    document.documentElement.classList.remove('dark');
+    document.documentElement.setAttribute('data-flux-appearance', 'light');
+    
+    // Force use CSS by applying classes immediately
+    document.documentElement.className = 'min-h-screen bg-white';
+    
+    // Override any dark mode detection
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-flux-appearance', 'light');
+        });
+    }
+</script>
