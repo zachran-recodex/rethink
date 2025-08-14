@@ -38,7 +38,10 @@
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
       "mcp__laravel-boost__browser-logs",
-      "mcp__laravel-boost__list-routes"
+      "mcp__laravel-boost__list-routes",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require blade-ui-kit/blade-icons)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" require blade-ui-kit/blade-heroicons)",
+      "Bash(\"C:/Users/zachr/.config/herd/bin/composer.bat\" remove livewire/volt)"
     ]
   },
   "enableAllProjectMcpServers": true,

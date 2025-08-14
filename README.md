@@ -5,7 +5,7 @@ A modern Laravel 12 application built with Livewire and Flux UI components, feat
 ## 🚀 Tech Stack
 
 - **Framework**: Laravel 12.23.1
-- **Frontend**: Livewire 3.6.4 with Volt 1.7.2 
+- **Frontend**: Livewire 3.6.4 
 - **UI Components**: Flux UI Free 2.2.4
 - **Styling**: Tailwind CSS 4.0.7
 - **Build Tool**: Vite 7.0.4
@@ -32,7 +32,6 @@ A modern Laravel 12 application built with Livewire and Flux UI components, feat
 
 ### Architecture Highlights
 - **Livewire Components**: Server-side reactive components
-- **Volt Integration**: Single-file component support
 - **Flux UI**: Modern component library with consistent design
 - **Role-based Permissions**: Powered by Spatie Laravel Permission
 - **Clean Code**: Laravel Pint enforced code styling
@@ -49,7 +48,7 @@ A modern Laravel 12 application built with Livewire and Flux UI components, feat
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/zachran-recodex/rethink.git
    cd rethink
    ```
 
@@ -189,10 +188,15 @@ Available free Flux UI components:
 ### Livewire Patterns
 ```php
 // Component with reactive state
-use function Livewire\Volt\{state};
+class Counter extends Component
+{
+    public int $count = 0;
 
-state(['count' => 0]);
-$increment = fn() => $this->count++;
+    public function increment(): void
+    {
+        $this->count++;
+    }
+}
 ```
 
 ```blade
