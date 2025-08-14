@@ -56,12 +56,32 @@ jobs:
       - name: Create Deployment Archive
         run: |
           mkdir -p deployment
-          rsync -av --exclude-from='.gitignore' \
+          rsync -av \
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='tests' \
             --exclude='.github' \
             --exclude='deployment' \
+            --exclude='.env*' \
+            --exclude='/.phpunit.cache' \
+            --exclude='/public/hot' \
+            --exclude='/storage/*.key' \
+            --exclude='/storage/pail' \
+            --exclude='/vendor' \
+            --exclude='.phpactor.json' \
+            --exclude='.phpunit.result.cache' \
+            --exclude='Homestead.json' \
+            --exclude='Homestead.yaml' \
+            --exclude='npm-debug.log' \
+            --exclude='yarn-error.log' \
+            --exclude='/auth.json' \
+            --exclude='/.fleet' \
+            --exclude='/.idea' \
+            --exclude='/.nova' \
+            --exclude='/.vscode' \
+            --exclude='/.zed' \
+            --exclude='/storage/app/' \
+            --exclude='/storage/framework/' \
             . deployment/
           tar -czf deployment.tar.gz -C deployment .
 
