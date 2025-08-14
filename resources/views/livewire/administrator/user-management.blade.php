@@ -34,7 +34,7 @@
                     </flux:select>
                 </div>
 
-                <flux:button type="submit" variant="primary">
+                <flux:button type="submit" variant="primary" class="text-dark">
                     Assign Role
                 </flux:button>
             </form>
@@ -48,7 +48,7 @@
                     <flux:button wire:click="toggleDeletedUsersView" variant="ghost" icon="archive-box" size="sm">
                         {{ $showDeletedUsers ? 'Show Active Users' : 'Show Deleted Users' }}
                     </flux:button>
-                    <flux:button wire:click="openCreateUserModal" variant="primary" icon="plus" size="sm">
+                    <flux:button wire:click="openCreateUserModal" variant="primary" icon="plus" size="sm" class="text-dark">
                         Add User
                     </flux:button>
                 </div>
@@ -251,7 +251,7 @@
 
                     <flux:field>
                         <flux:label>Status</flux:label>
-                        <flux:checkbox wire:model="isActive">
+                        <flux:checkbox wire:model="isActive" class="text-dark">
                             Active User
                         </flux:checkbox>
                     </flux:field>
@@ -279,7 +279,7 @@
                         <flux:button type="button" wire:click="closeUserModal" variant="ghost">
                             Cancel
                         </flux:button>
-                        <flux:button type="submit" variant="primary">
+                        <flux:button type="submit" variant="primary" class="text-dark">
                             {{ $editingUser ? 'Update User' : 'Create User' }}
                         </flux:button>
                     </div>
@@ -309,6 +309,12 @@
             }
 
             const chartData = @json($this->roleChartData);
+
+            // Validate chart data before initializing
+            if (!chartData || !chartData.labels || !chartData.data || !chartData.colors) {
+                console.warn('Chart data not properly initialized');
+                return;
+            }
 
             roleChart = new window.Chart(canvas, {
                 type: 'doughnut',
