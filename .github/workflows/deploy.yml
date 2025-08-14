@@ -30,6 +30,16 @@ jobs:
       - name: Add Flux Credentials
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
 
+      - name: Setup Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          mkdir -p bootstrap/cache
+          mkdir -p storage/logs
+          mkdir -p storage/framework/cache
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+
       - name: Install Dependencies
         run: |
           composer install --no-dev --optimize-autoloader --no-interaction
