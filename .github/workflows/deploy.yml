@@ -1,0 +1,200 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - deploy
+  workflow_dispatch:  # Allow manual deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    if: github.ref == 'refs/heads/deploy'
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'  # VPS menggunakan PHP 8.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # VPS menggunakan Node.js 20
+          cache: 'npm'
+
+      - name: Add Flux Credentials
+        run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
+
+      - name: Install Dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader --no-interaction
+          npm install
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Create Deployment Archive
+        run: |
+          mkdir -p deployment
+          rsync -av --exclude-from='.gitignore' \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='.github' \
+            --exclude='deployment' \
+            . deployment/
+          tar -czf deployment.tar.gz -C deployment .
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            
+            # Configuration
+            APP_PATH="/var/www/smartracker.web.id"
+            BACKUP_DIR="/home/deployer/backups"
+            DATE=$(date +%Y%m%d_%H%M%S)
+            
+            echo "🚀 Starting deployment for smartracker.web.id..."
+            
+            # Create backup
+            echo "💾 Creating backup..."
+            mkdir -p $BACKUP_DIR
+            if [ -d "$APP_PATH" ]; then
+              tar -czf $BACKUP_DIR/backup_$DATE.tar.gz -C $APP_PATH .
+            fi
+            
+            # Enter maintenance mode
+            echo "🔧 Enabling maintenance mode..."
+            cd $APP_PATH
+            php artisan down || true
+            
+            echo "📁 Ready for file upload..."
+
+      - name: Upload Application Files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "deployment.tar.gz"
+          target: "/tmp/"
+
+      - name: Complete Deployment
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            
+            APP_PATH="/var/www/smartracker.web.id"
+            
+            echo "📦 Extracting new files..."
+            cd $APP_PATH
+            tar -xzf /tmp/deployment.tar.gz
+            rm /tmp/deployment.tar.gz
+            
+            # Set up environment if not exists
+            if [ ! -f ".env" ]; then
+              echo "⚙️ Setting up environment..."
+              cp .env.example .env
+              php artisan key:generate
+              
+              # Update .env with production settings
+              sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+              sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
+              sed -i 's/APP_URL=http:\/\/localhost/APP_URL=https:\/\/smartracker.web.id/' .env
+              sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env
+              echo "DB_HOST=127.0.0.1" >> .env
+              echo "DB_PORT=3306" >> .env
+              echo "DB_DATABASE=smartracker_db" >> .env
+              echo "DB_USERNAME=smartracker_user" >> .env
+              echo "DB_PASSWORD=SmartTracker2024!" >> .env
+              echo "SESSION_DRIVER=database" >> .env
+              echo "CACHE_STORE=database" >> .env
+            fi
+            
+            # Run database migrations
+            echo "🗄️ Running migrations..."
+            php artisan migrate --force
+            
+            # Clear and optimize caches
+            echo "⚡ Optimizing application..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan livewire:clear
+            
+            # Set proper permissions
+            echo "🔐 Setting permissions..."
+            sudo chown -R deployer:www-data $APP_PATH
+            sudo chmod -R 755 $APP_PATH
+            sudo chmod -R 775 $APP_PATH/storage
+            sudo chmod -R 775 $APP_PATH/bootstrap/cache
+            
+            # Bring site back online
+            echo "🌐 Disabling maintenance mode..."
+            php artisan up
+            
+            echo "✅ Deployment completed successfully!"
+
+      - name: Health Check
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "🔍 Running health check..."
+            
+            # Check if website is responding
+            if curl -f -s https://smartracker.web.id > /dev/null; then
+              echo "✅ Website is online and responding"
+            else
+              echo "❌ Website health check failed"
+              exit 1
+            fi
+            
+            # Check Laravel application
+            cd /var/www/smartracker.web.id
+            if php artisan --version > /dev/null; then
+              echo "✅ Laravel application is healthy"
+            else
+              echo "❌ Laravel application check failed"
+              exit 1
+            fi
+            
+            echo "🎉 All health checks passed!"
+
+      - name: Notify Deployment Status
+        if: always()
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            DATE=$(date +"%Y-%m-%d %H:%M:%S")
+            STATUS="${{ job.status }}"
+            
+            if [ "$STATUS" = "success" ]; then
+              echo "✅ [$DATE] Deployment successful - smartracker.web.id" >> /var/log/deployment.log
+            else
+              echo "❌ [$DATE] Deployment failed - smartracker.web.id" >> /var/log/deployment.log
+            fi
