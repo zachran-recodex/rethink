@@ -6,8 +6,12 @@
         </div>
 
         @if (session()->has('success'))
-            <flux:callout variant="success" icon="check-circle" class="mb-4">
-                {{ session('success') }}
+            <flux:callout variant="success" icon="check-circle" inline="true    ">
+                <flux:callout.heading>{{ session('success') }}</flux:callout.heading>
+
+                <x-slot name="actions">
+                    <flux:button icon="x-mark" wire:click="$refresh" />
+                </x-slot>
             </flux:callout>
         @endif
 
@@ -69,7 +73,7 @@
                                     <flux:avatar
                                         :src="$user->avatar ? asset('storage/' . $user->avatar) : null"
                                         :name="$user->full_name"
-                                        size="sm"
+                                        size="md"
                                     />
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -80,9 +84,8 @@
                                     {{ $user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <flux:badge 
-                                        variant="solid" 
-                                        color="{{ $user->is_active ? 'green' : 'red' }}" 
+                                    <flux:badge
+                                        color="{{ $user->is_active ? 'green' : 'red' }}"
                                         size="sm"
                                     >
                                         {{ $user->is_active ? 'Active' : 'Inactive' }}
@@ -91,14 +94,14 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex flex-wrap gap-1">
                                         @forelse($user->roles as $role)
-                                            <flux:badge 
-                                                variant="solid" 
-                                                color="{{ 
+                                            <flux:badge
+                                                variant="solid"
+                                                color="{{
                                                     $role->name === 'Super Admin' ? 'red' : (
                                                     $role->name === 'Admin' ? 'blue' : (
                                                     $role->name === 'User' ? 'green' : (
                                                     $role->name === 'Guest' ? 'purple' : null)))
-                                                }}" 
+                                                }}"
                                                 size="sm"
                                             >
                                                 {{ $role->name }}
@@ -109,79 +112,69 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <div class="flex items-center justify-center gap-2">
-                                        @if($showDeletedUsers)
-                                            <!-- Actions for deleted users -->
-                                            <flux:button 
-                                                size="sm" 
-                                                variant="primary" 
-                                                icon="arrow-path"
-                                                wire:click="restoreUser({{ $user->id }})"
-                                                wire:confirm="Are you sure you want to restore {{ $user->full_name }}?"
-                                            >
-                                                Restore
-                                            </flux:button>
+                                    <flux:dropdown position="top" align="end">
+                                        <flux:button icon="ellipsis-horizontal" />
+                                        <flux:menu>
+                                            @if($showDeletedUsers)
+                                                <!-- Actions for deleted users -->
+                                                <flux:menu.item
+                                                    wire:click="restoreUser({{ $user->id }})"
+                                                    wire:confirm="Are you sure you want to restore {{ $user->full_name }}?"
+                                                    icon="arrow-path"
+                                                >
+                                                    Restore
+                                                </flux:menu.item>
 
-                                            <flux:button 
-                                                size="sm" 
-                                                variant="danger" 
-                                                icon="trash"
-                                                wire:click="permanentlyDeleteUser({{ $user->id }})"
-                                                wire:confirm="Are you sure you want to permanently delete {{ $user->full_name }}? This action cannot be undone!"
-                                            >
-                                                Delete Forever
-                                            </flux:button>
-                                        @else
-                                            <!-- Actions for active users -->
-                                            <flux:button 
-                                                size="sm" 
-                                                variant="ghost" 
-                                                icon="pencil"
-                                                wire:click="openEditUserModal({{ $user->id }})"
-                                            >
-                                                Edit
-                                            </flux:button>
+                                                <flux:menu.item
+                                                    wire:click="permanentlyDeleteUser({{ $user->id }})"
+                                                    wire:confirm="Are you sure you want to permanently delete {{ $user->full_name }}? This action cannot be undone!"
+                                                    icon="trash"
+                                                    variant="danger"
+                                                >
+                                                    Delete Forever
+                                                </flux:menu.item>
+                                            @else
+                                                <!-- Actions for active users -->
+                                                <flux:menu.item
+                                                    wire:click="openEditUserModal({{ $user->id }})"
+                                                    icon="pencil"
+                                                >
+                                                    Edit
+                                                </flux:menu.item>
 
-                                            <flux:button 
-                                                size="sm" 
-                                                variant="{{ $user->is_active ? 'filled' : 'primary' }}" 
-                                                icon="{{ $user->is_active ? 'pause' : 'play' }}"
-                                                wire:click="toggleUserStatus({{ $user->id }})"
-                                                wire:confirm="Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} {{ $user->full_name }}?"
-                                            >
-                                                {{ $user->is_active ? 'Deactivate' : 'Activate' }}
-                                            </flux:button>
-                                            
-                                            @if($user->roles->count() > 0)
-                                                <flux:dropdown>
-                                                    <flux:button size="sm" variant="ghost" icon="minus">
-                                                        Remove Role
-                                                    </flux:button>
-                                                    <flux:menu>
-                                                        @foreach($user->roles as $role)
-                                                            <flux:menu.item
-                                                                wire:click="removeRole({{ $user->id }}, '{{ $role->name }}')"
-                                                                wire:confirm="Are you sure you want to remove the '{{ $role->name }}' role from {{ $user->full_name }}?"
-                                                                icon="minus"
-                                                            >
-                                                                Remove {{ $role->name }}
-                                                            </flux:menu.item>
-                                                        @endforeach
-                                                    </flux:menu>
-                                                </flux:dropdown>
+                                                <flux:menu.item
+                                                    wire:click="toggleUserStatus({{ $user->id }})"
+                                                    wire:confirm="Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} {{ $user->full_name }}?"
+                                                    icon="{{ $user->is_active ? 'pause' : 'play' }}"
+                                                >
+                                                    {{ $user->is_active ? 'Deactivate' : 'Activate' }}
+                                                </flux:menu.item>
+
+                                                @if($user->roles->count() > 0)
+                                                    <flux:menu.separator />
+                                                    @foreach($user->roles as $role)
+                                                        <flux:menu.item
+                                                            wire:click="removeRole({{ $user->id }}, '{{ $role->name }}')"
+                                                            wire:confirm="Are you sure you want to remove the '{{ $role->name }}' role from {{ $user->full_name }}?"
+                                                            icon="minus"
+                                                        >
+                                                            Remove {{ $role->name }}
+                                                        </flux:menu.item>
+                                                    @endforeach
+                                                @endif
+
+                                                <flux:menu.separator />
+                                                <flux:menu.item
+                                                    wire:click="deleteUser({{ $user->id }})"
+                                                    wire:confirm="Are you sure you want to delete {{ $user->full_name }}? This action can be undone from the deleted users view."
+                                                    icon="trash"
+                                                    variant="danger"
+                                                >
+                                                    Delete
+                                                </flux:menu.item>
                                             @endif
-
-                                            <flux:button 
-                                                size="sm" 
-                                                variant="danger" 
-                                                icon="trash"
-                                                wire:click="deleteUser({{ $user->id }})"
-                                                wire:confirm="Are you sure you want to delete {{ $user->full_name }}? This action can be undone from the deleted users view."
-                                            >
-                                                Delete
-                                            </flux:button>
-                                        @endif
-                                    </div>
+                                        </flux:menu>
+                                    </flux:dropdown>
                                 </td>
                             </tr>
                         @endforeach
