@@ -8,12 +8,31 @@ html, body {
     font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
     background-color: white;
     color: #0E1A1F;
+    line-height: 1.5;
 }
 
-/* Ensure these classes are immediately available */
+/* Ensure these classes are immediately available and used */
 .min-h-screen { min-height: 100vh !important; }
 .bg-white { background-color: white !important; }
 .text-zinc-600 { color: #525252 !important; }
+.flex { display: flex !important; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.rounded-xl { border-radius: 0.75rem !important; }
+.border { border-width: 1px !important; }
+.border-neutral-200 { border-color: #e5e5e5 !important; }
+.p-4 { padding: 1rem !important; }
+.text-sm { font-size: 0.875rem !important; }
+.font-medium { font-weight: 500 !important; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important; }
+
+/* Force immediate usage of brand colors */
+.text-primary { color: #6967FB !important; }
+.bg-primary { background-color: #6967FB !important; }
+.text-accent { color: #C8F904 !important; }
+.bg-accent { background-color: #C8F904 !important; }
+.text-dark { color: #0E1A1F !important; }
+.bg-dark { background-color: #0E1A1F !important; }
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
